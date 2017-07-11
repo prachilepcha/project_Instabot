@@ -248,8 +248,8 @@ def target_comments(insta_username):            #Takes argument as insta usernam
             for y in range(0, len(caption_info['data'])):
 
                 caption_text = str(caption_info['data'][y]['caption'])
-                caption = caption_text.split("Shoe")
-                if 'shoe' in caption:
+                caption = caption_text.split(' ')
+                if '#shoe' in caption:
                     print 'Read Caption: %s' % (caption)
                     media_id = get_post_id(insta_username)
                     comment_text = 'Nice shoes! Visit our page for some kickass shoes.'
@@ -321,11 +321,11 @@ def start_bot():
             insta_username = raw_input("enter username of the user : ")
             get_media_of_your_choice(insta_username)
         elif choice == 'k':
-            insta_username = raw_input("Enter the username: \n")
+            insta_username = raw_input("Enter the username: ")
             target_comments(insta_username)
         elif choice == 'l':
             exit()
         else:
-            print("Wrong choice!")
+            print "Wrong choice!"
 
 start_bot()
