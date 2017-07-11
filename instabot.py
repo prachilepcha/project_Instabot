@@ -248,7 +248,7 @@ def target_comments(insta_username):            #Takes argument as insta usernam
             for y in range(0, len(caption_info['data'])):
 
                 caption_text = str(caption_info['data'][y]['caption'])
-                caption = caption_text.split(" ")
+                caption = caption_text.split("Shoe")
                 if 'shoe' in caption:
                     print 'Read Caption: %s' % (caption)
                     media_id = get_post_id(insta_username)
@@ -260,7 +260,7 @@ def target_comments(insta_username):            #Takes argument as insta usernam
                     make_comment = requests.post(request_url, payload).json()
 
                     if make_comment['meta']['code'] == 200:
-                        print 'Successfully Posted Targetted Comment!'
+                        print 'Successfully Posted Targeted Comment!'
                     else:
                         print 'Unable to add comment. Try again!'
                 else:
@@ -326,6 +326,6 @@ def start_bot():
         elif choice == 'l':
             exit()
         else:
-            cprint("Wrong choice!")
+            print("Wrong choice!")
 
 start_bot()
