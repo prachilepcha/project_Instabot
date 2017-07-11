@@ -1,12 +1,12 @@
 import requests, urllib
-from textblob import TextBlob
+from textblob import TextBlob               # For Sentiment Analysis the library TextBlob is used
 from textblob.sentiments import NaiveBayesAnalyzer
 
-APP_ACCESS_TOKEN = '5708214805.2424d36.39486f8497c642028688f266eb69750d'
+APP_ACCESS_TOKEN = '5708214805.2424d36.39486f8497c642028688f266eb69750d'    #APP_ACCESS_TOKEN is a global variable.
 #Token owner: pl_instabot
 #Sandbox Users : shoetho, love_with_destinations
 
-BASE_URL = 'https://api.instagram.com/v1/'
+BASE_URL = 'https://api.instagram.com/v1/'          #BASE URL is a global variable
 
 
 def self_info():            #Function declaration to get your own info
@@ -212,6 +212,66 @@ def delete_negative_comment(insta_username): #Function declaration to make delet
         print 'Status code other than 200 received!'
 
 
+def get_media_of_your_choice(insta_username):       #Function to fetch users any post
+    user_id = get_user_id(insta_username)
+    if user_id == None:
+        print 'user does not exist'
+    request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (user_id, APP_ACCESS_TOKEN)
+    user_media = requests.get(request_url).json()
+    if user_media['meta']['code'] == 200:
+        if len(user_media['data']):
+
+            post_number = raw_input("enter no of post which you want : ")
+            post_number = int(post_number)
+
+            x = post_number - 1
+            image_name = user_media['data'][x]['id'] + '.jpeg'
+            image_url = user_media['data'][x]['images']['standard_resolution']['url']
+            urllib.urlretrieve(image_url, image_name)
+            print 'Your image has been downloaded!'
+        else:
+            print'User media does not exist'
+    else:
+        print 'Status code error!'
+
+
+def target_comments(insta_username):            #Takes argument as insta username
+    user_id = get_user_id(insta_username)       #URL of tags has been used
+    request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (user_id, APP_ACCESS_TOKEN)
+    print 'GET request url : %s' % (request_url)
+    caption_info = requests.get(request_url).json()
+
+    if caption_info['meta']['code'] == 200:
+
+        if len(caption_info['data']):
+
+            for y in range(0, len(caption_info['data'])):
+
+                caption_text = str(caption_info['data'][y]['caption'])
+                caption = caption_text.split(" ")
+                if 'shoe' in caption:
+                    print 'Read Caption: %s' % (caption)
+                    media_id = get_post_id(insta_username)
+                    comment_text = 'Nice shoes! Visit our page for some kickass shoes.'
+                    payload = {'access_token': APP_ACCESS_TOKEN, "text": comment_text}
+                    request_url = (BASE_URL + 'media/%s/comments') % (media_id)
+                    print 'POST request url : %s' % (request_url)
+
+                    make_comment = requests.post(request_url, payload).json()
+
+                    if make_comment['meta']['code'] == 200:
+                        print 'Successfully Posted Targetted Comment!'
+                    else:
+                        print 'Unable to add comment. Try again!'
+                else:
+                    print 'No caption on the post!'
+
+        else:
+
+            print 'Status code other than 200 received!'
+    exit()
+
+
 def start_bot():
     while True:
         print '\n'
@@ -226,7 +286,10 @@ def start_bot():
         print "g.Get a list of comments on the recent post of a user\n"
         print "h.Make a comment on the recent post of a user\n"
         print "i.Delete negative comments from the recent post of a user\n"
-        print "j.Exit"
+        print "j.Get any post of a user\n"
+        print "k.Marketing\n"
+        print "l.Exit"
+
 
         choice = raw_input("Enter you choice: ")
         if choice == "a":
@@ -254,9 +317,15 @@ def start_bot():
         elif choice=="i":
            insta_username = raw_input("Enter the username of the user: ")
            delete_negative_comment(insta_username)
-        elif choice == "j":
+        elif choice == 'j':
+            insta_username = raw_input("enter username of the user : ")
+            get_media_of_your_choice(insta_username)
+        elif choice == 'k':
+            insta_username = raw_input("Enter the username: \n")
+            target_comments(insta_username)
+        elif choice == 'l':
             exit()
         else:
-            print "wrong choice"
+            cprint("Wrong choice!")
 
 start_bot()
