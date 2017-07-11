@@ -1,15 +1,15 @@
 import requests, urllib
-from textblob import TextBlob               # For Sentiment Analysis the library TextBlob is used
+from textblob import TextBlob       # For Sentiment Analysis the library TextBlob is used
 from textblob.sentiments import NaiveBayesAnalyzer
 
-APP_ACCESS_TOKEN = '5708214805.2424d36.39486f8497c642028688f266eb69750d'    #APP_ACCESS_TOKEN is a global variable.
+APP_ACCESS_TOKEN = '5708214805.2424d36.39486f8497c642028688f266eb69750d'    #APP_ACCESS_TOKEN is a global variable
 #Token owner: pl_instabot
 #Sandbox Users : shoetho, love_with_destinations
 
-BASE_URL = 'https://api.instagram.com/v1/'          #BASE URL is a global variable
+BASE_URL = 'https://api.instagram.com/v1/'      #BASE_URL is a global variable
 
 
-def self_info():            #Function declaration to get your own info
+def self_info():        #Function declaration to get your own info
     request_url = (BASE_URL + 'users/self/?access_token=%s') % (APP_ACCESS_TOKEN)
     print 'GET request url : %s' % (request_url)
     user_info = requests.get(request_url).json()
@@ -26,7 +26,7 @@ def self_info():            #Function declaration to get your own info
         print 'Status code other than 200 received!'
 
 
-def get_user_id(insta_username):            #Function declaration to get the ID of a user by username
+def get_user_id(insta_username):         #Function declaration to get the ID of a user by username
     request_url = (BASE_URL + 'users/search?q=%s&access_token=%s') % (insta_username, APP_ACCESS_TOKEN)
     print 'GET request url : %s' % (request_url)
     user_info = requests.get(request_url).json()
@@ -188,7 +188,7 @@ def delete_negative_comment(insta_username): #Function declaration to make delet
 
     if comment_info['meta']['code'] == 200:
         if len(comment_info['data']):
-            #Here's a naive implementation of how to delete the negative comments :)
+            #Naive implementation to delete the negative comments
             for x in range(0, len(comment_info['data'])):
                 comment_id = comment_info['data'][x]['id']
                 comment_text = comment_info['data'][x]['text']
@@ -260,6 +260,7 @@ def target_comments(insta_username):            #Takes argument as insta usernam
                     make_comment = requests.post(request_url, payload).json()
 
                     if make_comment['meta']['code'] == 200:
+
                         print 'Successfully Posted Targeted Comment!'
                     else:
                         print 'Unable to add comment. Try again!'
